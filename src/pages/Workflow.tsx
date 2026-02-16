@@ -20,20 +20,25 @@ export default function Workflow() {
   const totalSteps = workflowStages.reduce((acc, s) => acc + s.steps.length, 0);
 
   return (
-    <div className="p-4">
+    <div className="p-3 pb-24">
+      {/* Header */}
       <div className="mb-4">
-        <h1 className="text-xl font-bold text-foreground">📋 Бизнес-процесс</h1>
-        <p className="text-xs text-muted-foreground mt-1">
-          {workflowStages.length} этапов • {totalSteps} шагов
-        </p>
+        <h1 className="font-condensed text-xl font-extrabold uppercase tracking-wide text-[hsl(var(--white))]">
+          ⚙ Бизнес-процесс
+        </h1>
+        <div className="font-mono text-[8px] text-[hsl(var(--ash))] uppercase tracking-widest mt-1">
+          {workflowStages.length} этапов · {totalSteps} шагов
+        </div>
       </div>
 
-      <div className="flex gap-2 mb-4">
-        <FilterButton active={filter === 'all'} onClick={() => setFilter('all')}>Все этапы</FilterButton>
-        <FilterButton active={filter === 'my'} onClick={() => setFilter('my')}>Мои действия</FilterButton>
+      {/* Filters */}
+      <div className="flex gap-1.5 mb-4">
+        <BrutalFilterBtn active={filter === 'all'} onClick={() => setFilter('all')}>Все этапы</BrutalFilterBtn>
+        <BrutalFilterBtn active={filter === 'my'} onClick={() => setFilter('my')}>Мои действия</BrutalFilterBtn>
       </div>
 
-      <div className="space-y-3">
+      {/* Stages */}
+      <div className="flex flex-col gap-1.5">
         {filteredStages.map((stage) => (
           <StageCard
             key={stage.id}
@@ -48,23 +53,23 @@ export default function Workflow() {
       </div>
 
       {filteredStages.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-3xl mb-2">🔍</p>
-          <p className="text-sm">Нет действий для вашей роли</p>
+        <div className="text-center py-12">
+          <div className="font-condensed text-lg font-bold uppercase text-[hsl(var(--ash))] mb-2">🔍</div>
+          <div className="font-mono text-[10px] text-[hsl(var(--ash))]">Нет действий для вашей роли</div>
         </div>
       )}
     </div>
   );
 }
 
-function FilterButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function BrutalFilterBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+      className={`border rounded-md px-3 py-2 font-condensed text-[11px] font-bold uppercase tracking-wide transition-transform active:translate-y-px ${
         active
-          ? 'bg-primary text-primary-foreground'
-          : 'bg-card text-muted-foreground border border-border'
+          ? 'bg-[#0a1f14] border-go/40 text-go shadow-[0_0_20px_rgba(16,185,129,.12),inset_0_0_20px_rgba(16,185,129,.05)]'
+          : 'bg-[hsl(var(--rail))] border-[hsl(var(--wire))] text-[hsl(var(--ash))]'
       }`}
     >
       {children}
@@ -79,45 +84,49 @@ function StageCard({
   expandedStep: string | null; onToggleStep: (stepId: string) => void; roleSystemName: string;
 }) {
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden">
-      <button onClick={onToggle} className="w-full flex items-center justify-between p-4 active:opacity-80">
+    <div className="bg-[hsl(var(--rail))] border border-[hsl(var(--seam))] rounded-md overflow-hidden border-l-[3px]"
+      style={{ borderLeftColor: stage.color }}>
+      <button onClick={onToggle} className="w-full flex items-center justify-between p-3 active:opacity-80">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-lg" style={{ backgroundColor: `${stage.color}20` }}>
+          <div className="w-8 h-8 rounded-sm flex items-center justify-center text-base font-bold"
+            style={{ backgroundColor: `${stage.color}15`, color: stage.color }}>
             {stage.icon}
           </div>
           <div className="text-left">
-            <div className="text-sm font-semibold text-foreground">{stage.name}</div>
-            <div className="text-[10px] text-muted-foreground">
+            <div className="font-condensed text-xs font-bold uppercase tracking-tight text-[hsl(var(--white))]">{stage.name}</div>
+            <div className="font-mono text-[7px] text-[hsl(var(--ash))] uppercase tracking-wider">
               {stage.steps.length} {stage.steps.length === 1 ? 'шаг' : stage.steps.length < 5 ? 'шага' : 'шагов'}
             </div>
           </div>
         </div>
-        <span className="text-muted-foreground text-sm">{expanded ? '▲' : '▼'}</span>
+        <span className="font-mono text-[10px] text-[hsl(var(--ash))]">{expanded ? '▲' : '▼'}</span>
       </button>
 
       {expanded && (
-        <div className="border-t border-border px-3 pb-3">
+        <div className="border-t border-[hsl(var(--wire))] px-2 pb-2">
           {stage.steps.map((step, idx) => {
             const canExecute = canUserExecuteStep(roleSystemName, step);
             const isExpanded = expandedStep === step.id;
             return (
-              <div key={step.id} className="mt-2">
+              <div key={step.id} className="mt-1.5">
                 <button
                   onClick={() => onToggleStep(step.id)}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
-                    canExecute ? 'bg-background active:opacity-80' : 'bg-background opacity-60'
+                  className={`w-full text-left p-2.5 rounded-md transition-colors ${
+                    canExecute ? 'bg-[hsl(var(--plate))] active:opacity-80' : 'bg-[hsl(var(--plate))] opacity-50'
                   }`}
                 >
                   <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5" style={{ backgroundColor: `${stage.color}30`, color: stage.color }}>
+                    <div className="w-5 h-5 rounded-sm flex items-center justify-center font-mono text-[9px] font-bold flex-shrink-0 mt-0.5"
+                      style={{ backgroundColor: `${stage.color}20`, color: stage.color }}>
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium text-foreground truncate">{step.substep}</div>
-                      <div className="text-[10px] text-muted-foreground mt-0.5 truncate">{step.initiator} → {step.receiver}</div>
+                      <div className="font-condensed text-[11px] font-bold uppercase tracking-tight text-[hsl(var(--white))] truncate">{step.substep}</div>
+                      <div className="font-mono text-[7px] text-[hsl(var(--ash))] mt-0.5 truncate">{step.initiator} → {step.receiver}</div>
                     </div>
                     {canExecute && (
-                      <span className="text-[8px] px-1.5 py-0.5 rounded-full flex-shrink-0" style={{ backgroundColor: `${stage.color}20`, color: stage.color }}>
+                      <span className="font-mono text-[7px] font-bold px-1.5 py-0.5 rounded-sm uppercase tracking-wider flex-shrink-0"
+                        style={{ backgroundColor: `${stage.color}15`, color: stage.color, border: `1px solid ${stage.color}40` }}>
                         Ваше
                       </span>
                     )}
@@ -125,12 +134,12 @@ function StageCard({
                 </button>
 
                 {isExpanded && (
-                  <div className="ml-7 mt-1 p-3 bg-background rounded-lg border border-border">
-                    <div className="space-y-2 text-[11px]">
+                  <div className="ml-7 mt-1 p-2.5 bg-[hsl(var(--plate))] rounded-md border border-[hsl(var(--wire))]">
+                    <div className="space-y-1.5">
                       <DetailRow label="Действие" value={step.action} />
                       <DetailRow label="Срок" value={step.deadline} />
                       <DetailRow label="Документ" value={step.document} />
-                      {step.trigger && <DetailRow label="Триггер" value={step.trigger} highlight />}
+                      {step.trigger && <DetailRow label="Триггер" value={step.trigger} color={stage.color} />}
                       {step.note && <DetailRow label="Примечание" value={step.note} />}
                     </div>
                   </div>
@@ -144,11 +153,11 @@ function StageCard({
   );
 }
 
-function DetailRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function DetailRow({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div>
-      <span className="text-muted-foreground">{label}: </span>
-      <span className={highlight ? 'text-primary font-medium' : 'text-foreground'}>{value}</span>
+    <div className="font-mono text-[9px]">
+      <span className="text-[hsl(var(--ash))] uppercase tracking-wider">{label}: </span>
+      <span style={color ? { color } : undefined} className={color ? 'font-bold' : 'text-[hsl(var(--ghost))]'}>{value}</span>
     </div>
   );
 }
