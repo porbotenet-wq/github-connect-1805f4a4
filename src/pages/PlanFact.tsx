@@ -9,20 +9,11 @@ export default function PlanFact() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (project) loadObjectsList(project.id);
-  }, [project]);
-
-  useEffect(() => {
-    if (selectedObject) loadPlanFact(selectedObject);
-  }, [selectedObject]);
+  useEffect(() => { if (project) loadObjectsList(project.id); }, [project]);
+  useEffect(() => { if (selectedObject) loadPlanFact(selectedObject); }, [selectedObject]);
 
   async function loadObjectsList(projectId: string) {
-    const { data } = await (supabase as any)
-      .from('construction_objects')
-      .select('id, name')
-      .eq('project_id', projectId)
-      .order('created_at', { ascending: false });
+    const { data } = await (supabase as any).from('construction_objects').select('id, name').eq('project_id', projectId).order('created_at', { ascending: false });
     const objs = data || [];
     setObjects(objs);
     if (objs.length > 0) setSelectedObject(objs[0].id);
@@ -30,12 +21,7 @@ export default function PlanFact() {
 
   async function loadPlanFact(objectId: string) {
     setLoading(true);
-    const { data } = await (supabase as any)
-      .from('plan_fact_daily')
-      .select('*')
-      .eq('object_id', objectId)
-      .order('report_date', { ascending: false })
-      .limit(50);
+    const { data } = await (supabase as any).from('plan_fact_daily').select('*').eq('object_id', objectId).order('report_date', { ascending: false }).limit(50);
     setData(data || []);
     setLoading(false);
   }
@@ -51,84 +37,74 @@ export default function PlanFact() {
   );
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-3 text-foreground">📝 План-Факт</h1>
+    <div className="p-3 pb-24">
+      <div className="font-condensed text-xl font-extrabold uppercase tracking-wide text-[hsl(var(--white))] mb-3">
+        📝 План-Факт
+      </div>
 
-      <select
-        value={selectedObject}
-        onChange={(e) => setSelectedObject(e.target.value)}
-        className="w-full bg-card text-foreground text-xs px-3 py-2 rounded-lg border border-border mb-4"
-      >
+      <select value={selectedObject} onChange={(e) => setSelectedObject(e.target.value)}
+        className="w-full bg-rail text-foreground font-mono text-[10px] px-3 py-2 rounded-md border border-seam mb-3">
         <option value="">Выберите объект</option>
-        {objects.map((o: any) => (
-          <option key={o.id} value={o.id}>{o.name}</option>
-        ))}
+        {objects.map((o: any) => <option key={o.id} value={o.id}>{o.name}</option>)}
       </select>
 
       {data.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="bg-card rounded-xl p-3 border border-border text-center">
-            <div className="text-[10px] text-muted-foreground">Модули (план/факт)</div>
-            <div className="text-sm font-bold text-foreground">
-              {totals.modulesPlan} / {totals.modulesFact}
-            </div>
+        <div className="flex gap-1.5 mb-3">
+          <div className="flex-1 bg-rail border border-seam rounded-md p-2 text-center">
+            <span className="font-mono text-[7px] text-ash uppercase block">Модули П/Ф</span>
+            <span className="font-mono text-sm font-bold text-arc">{totals.modulesPlan}/{totals.modulesFact}</span>
           </div>
-          <div className="bg-card rounded-xl p-3 border border-border text-center">
-            <div className="text-[10px] text-muted-foreground">Кронштейны (план/факт)</div>
-            <div className="text-sm font-bold text-foreground">
-              {totals.bracketsPlan} / {totals.bracketsFact}
-            </div>
+          <div className="flex-1 bg-rail border border-seam rounded-md p-2 text-center">
+            <span className="font-mono text-[7px] text-ash uppercase block">Кронштейны П/Ф</span>
+            <span className="font-mono text-sm font-bold text-amber">{totals.bracketsPlan}/{totals.bracketsFact}</span>
           </div>
         </div>
       )}
 
       {loading ? (
-        <div className="text-center text-muted-foreground py-8">Загрузка...</div>
+        <div className="text-center py-8 font-mono text-[10px] text-ash">Загрузка...</div>
       ) : data.length > 0 ? (
-        <div className="space-y-2">
+        <div className="flex flex-col gap-1">
           {data.map((row: any) => (
-            <div key={row.id} className="bg-card rounded-xl p-3 border border-border">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-foreground">
+            <div key={row.id} className="bg-rail border border-seam rounded-md p-2.5">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-condensed text-xs font-bold text-[hsl(var(--white))]">
                   📅 {new Date(row.report_date).toLocaleDateString('ru-RU')}
                 </span>
-                {row.week && <span className="text-[10px] text-muted-foreground">{row.week}</span>}
+                {row.week && <span className="font-mono text-[7px] text-ash">{row.week}</span>}
               </div>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div>
-                  <span className="text-muted-foreground">Модули:</span>{' '}
-                  <span className="text-foreground">{row.modules_plan || 0} / {row.modules_fact || 0}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Кронштейны:</span>{' '}
-                  <span className="text-foreground">{row.brackets_plan || 0} / {row.brackets_fact || 0}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Герметик:</span>{' '}
-                  <span className="text-foreground">{row.hermetic_plan || 0} / {row.hermetic_fact || 0}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Герметизация:</span>{' '}
-                  <span className="text-foreground">{row.sealant_plan || 0} / {row.sealant_fact || 0}</span>
-                </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <PfCell label="Модули" plan={row.modules_plan} fact={row.modules_fact} />
+                <PfCell label="Кронштейны" plan={row.brackets_plan} fact={row.brackets_fact} />
+                <PfCell label="Герметик" plan={row.hermetic_plan} fact={row.hermetic_fact} />
+                <PfCell label="Герметизация" plan={row.sealant_plan} fact={row.sealant_fact} />
               </div>
-              {row.notes && (
-                <div className="text-[10px] text-muted-foreground mt-2">💬 {row.notes}</div>
-              )}
+              {row.notes && <div className="font-mono text-[7px] text-ash mt-1.5">💬 {row.notes}</div>}
             </div>
           ))}
         </div>
       ) : selectedObject ? (
-        <div className="text-center text-muted-foreground py-8">
-          <p className="text-3xl mb-2">📝</p>
-          <p>Нет данных план-факт</p>
+        <div className="text-center py-8">
+          <div className="text-3xl mb-2">📝</div>
+          <div className="font-mono text-[10px] text-ash">Нет данных план-факт</div>
         </div>
       ) : (
-        <div className="text-center text-muted-foreground py-8">
-          <p className="text-3xl mb-2">🏗</p>
-          <p>Выберите объект</p>
+        <div className="text-center py-8">
+          <div className="text-3xl mb-2">🏗</div>
+          <div className="font-mono text-[10px] text-ash">Выберите объект</div>
         </div>
       )}
+    </div>
+  );
+}
+
+function PfCell({ label, plan, fact }: { label: string; plan: number; fact: number }) {
+  const pct = plan > 0 ? (fact / plan) * 100 : 0;
+  const color = pct >= 100 ? 'text-go' : pct > 50 ? 'text-amber' : 'text-signal';
+  return (
+    <div>
+      <span className="font-mono text-[7px] text-ash">{label}:</span>
+      <span className={`font-mono text-[9px] font-bold ${color} ml-1`}>{plan || 0}/{fact || 0}</span>
     </div>
   );
 }
