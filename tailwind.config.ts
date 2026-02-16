@@ -13,6 +13,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        condensed: ["'Barlow Condensed'", "sans-serif"],
+        mono: ["'JetBrains Mono'", "monospace"],
+        sans: ["'Barlow'", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -57,6 +62,23 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Industrial status colors
+        go: "hsl(var(--go))",
+        amber: "hsl(var(--amber))",
+        signal: "hsl(var(--signal))",
+        arc: "hsl(var(--arc))",
+        // Surface layers
+        void: "hsl(var(--void))",
+        base: "hsl(var(--base))",
+        plate: "hsl(var(--plate))",
+        panel: "hsl(var(--panel))",
+        rail: "hsl(var(--rail))",
+        wire: "hsl(var(--wire))",
+        seam: "hsl(var(--seam))",
+        fog: "hsl(var(--fog))",
+        ash: "hsl(var(--ash))",
+        dust: "hsl(var(--dust))",
+        ghost: "hsl(var(--ghost))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -65,25 +87,22 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        blink: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.3" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        blink: "blink 0.9s infinite",
       },
     },
   },

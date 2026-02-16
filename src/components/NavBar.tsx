@@ -14,6 +14,7 @@ const moreTabs = [
   { path: '/modules', icon: '📦', label: 'Модули' },
   { path: '/documents', icon: '📁', label: 'Документы' },
   { path: '/project', icon: '🏗', label: 'Объект' },
+  { path: '/objects', icon: '🏢', label: 'Объекты' },
   { path: '/admin', icon: '👥', label: 'Админ' },
 ];
 
@@ -22,37 +23,31 @@ export function NavBar() {
   const { pathname } = useLocation();
   const [showMore, setShowMore] = useState(false);
 
-  const isMoreActive = moreTabs.some((tab) => pathname === tab.path);
+  const isMoreActive = moreTabs.some((tab) => pathname === tab.path || pathname.startsWith(tab.path + '/'));
 
   return (
     <>
       {showMore && (
         <div
-          className="fixed inset-0 bg-black/50 z-40"
+          className="fixed inset-0 bg-black/60 z-40"
           onClick={() => setShowMore(false)}
         />
       )}
 
       {showMore && (
-        <div className="fixed bottom-16 left-0 right-0 bg-card border-t border-border z-50 rounded-t-xl py-3 px-4 shadow-xl">
-          <div className="grid grid-cols-4 gap-2">
+        <div className="fixed bottom-14 left-0 right-0 bg-plate border-t border-wire z-50 rounded-t-lg py-3 px-3">
+          <div className="grid grid-cols-4 gap-1.5">
             {moreTabs.map((tab) => {
-              const active = pathname === tab.path;
+              const active = pathname === tab.path || pathname.startsWith(tab.path + '/');
               return (
                 <button
                   key={tab.path}
-                  onClick={() => {
-                    navigate(tab.path);
-                    setShowMore(false);
-                  }}
-                  className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-colors ${
-                    active
-                      ? 'text-primary bg-primary/10'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                  onClick={() => { navigate(tab.path); setShowMore(false); }}
+                  className={`flex flex-col items-center gap-1 px-1.5 py-2 rounded-md transition-colors font-condensed text-[10px] font-bold uppercase tracking-wider
+                    ${active ? 'text-arc bg-arc/10 border border-arc/25' : 'text-ash hover:text-ghost border border-transparent'}`}
                 >
-                  <span className="text-lg">{tab.icon}</span>
-                  <span className="text-[10px] font-medium">{tab.label}</span>
+                  <span className="text-base">{tab.icon}</span>
+                  <span>{tab.label}</span>
                 </button>
               );
             })}
@@ -60,21 +55,18 @@ export function NavBar() {
         </div>
       )}
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border flex justify-around items-center py-2 px-1 z-50">
+      <nav className="fixed bottom-0 left-0 right-0 bg-plate border-t border-wire flex justify-around items-center py-1.5 px-1 z-50">
         {mainTabs.map((tab) => {
           if (tab.path === '/more') {
             return (
               <button
                 key="more"
                 onClick={() => setShowMore(!showMore)}
-                className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
-                  isMoreActive || showMore
-                    ? 'text-primary bg-primary/10'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-md transition-colors font-condensed text-[9px] font-bold uppercase tracking-wider
+                  ${isMoreActive || showMore ? 'text-arc bg-arc/10' : 'text-ash hover:text-ghost'}`}
               >
-                <span className="text-lg">{tab.icon}</span>
-                <span className="text-[10px] font-medium">{tab.label}</span>
+                <span className="text-base">{tab.icon}</span>
+                <span>{tab.label}</span>
               </button>
             );
           }
@@ -83,18 +75,12 @@ export function NavBar() {
           return (
             <button
               key={tab.path}
-              onClick={() => {
-                navigate(tab.path);
-                setShowMore(false);
-              }}
-              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${
-                active
-                  ? 'text-primary bg-primary/10'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
+              onClick={() => { navigate(tab.path); setShowMore(false); }}
+              className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-md transition-colors font-condensed text-[9px] font-bold uppercase tracking-wider
+                ${active ? 'text-arc bg-arc/10' : 'text-ash hover:text-ghost'}`}
             >
-              <span className="text-lg">{tab.icon}</span>
-              <span className="text-[10px] font-medium">{tab.label}</span>
+              <span className="text-base">{tab.icon}</span>
+              <span>{tab.label}</span>
             </button>
           );
         })}

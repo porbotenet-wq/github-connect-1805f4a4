@@ -48,9 +48,12 @@ function AppContent() {
       <div className="flex items-center justify-center min-h-screen p-4">
         <div className="text-center">
           <div className="text-4xl mb-4">⚠️</div>
-          <div className="text-lg mb-2">Ошибка подключения</div>
-          <div className="text-sm opacity-60 mb-4">{error}</div>
-          <button onClick={() => { loadUser(tgUser?.id || 8059235604); loadProject(); }} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg">Повторить</button>
+          <div className="font-condensed text-lg font-bold uppercase tracking-wide text-signal mb-2">Ошибка подключения</div>
+          <div className="font-mono text-[10px] text-ash mb-4">{error}</div>
+          <button onClick={() => { loadUser(tgUser?.id || 8059235604); loadProject(); }}
+            className="bg-[#0f2b1a] text-go border border-go/40 px-4 py-2 rounded-md font-condensed text-xs font-bold uppercase tracking-wide">
+            Повторить
+          </button>
         </div>
       </div>
     );
@@ -61,7 +64,8 @@ function AppContent() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="text-4xl mb-4 animate-pulse">🏗</div>
-          <div className="text-lg opacity-60">Загрузка STSphera...</div>
+          <div className="font-condensed text-lg font-bold uppercase tracking-wide text-ghost">Загрузка SMR·SFERA...</div>
+          <div className="font-mono text-[9px] text-ash tracking-widest mt-1">// CONNECTING</div>
         </div>
       </div>
     );
@@ -72,8 +76,8 @@ function AppContent() {
       <div className="flex items-center justify-center min-h-screen p-4">
         <div className="text-center">
           <div className="text-4xl mb-4">⏳</div>
-          <div className="text-lg mb-2">Ожидание активации</div>
-          <div className="text-sm opacity-60">Ваша заявка на рассмотрении.</div>
+          <div className="font-condensed text-lg font-bold uppercase text-amber">Ожидание активации</div>
+          <div className="font-mono text-[10px] text-ash mt-2">Ваша заявка на рассмотрении.</div>
         </div>
       </div>
     );
@@ -84,7 +88,7 @@ function AppContent() {
       <div className="flex items-center justify-center min-h-screen p-4">
         <div className="text-center">
           <div className="text-4xl mb-4">🚫</div>
-          <div className="text-lg mb-2">Аккаунт заблокирован</div>
+          <div className="font-condensed text-lg font-bold uppercase text-signal">Аккаунт заблокирован</div>
         </div>
       </div>
     );
